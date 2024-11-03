@@ -1,2 +1,2 @@
 ## Checklist
-Filter for pitchers who have thrown 10+ pitches each year
+Filter for pitch types for which pitchers have thrown 10+ of each year
