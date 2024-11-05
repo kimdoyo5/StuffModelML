@@ -3,11 +3,24 @@
 ## Checklist
 - Filter for pitch types for which pitchers have thrown 10+ of each year (due to arm_angles and spin_directions dataset restriction)
 
+## TO-DO
+- Pitch-by-Pitch Spin Profile Estimation
+- Trajectory Calculator
+- Late Movement Calculator
+- CleanSavantData.py
 
 
 ## What Each Part Does
 
-### Dataset
+### Pitch-by-Pitch Spin Profile Estimation
+Incomplete
+
+### Trajectory Calculator
+Incomplete
+
+### Late Movement Calculator
+Incomplete
+
 
 ### Pitch-by-Pitch Arm Angle Estimation
 Currently, BaseballSavant only offers average arm angle for a pitcher, for each year.  
@@ -27,26 +40,6 @@ When release_pos_z is higher, or release_pos_x is more gloveside, the estimated_
 When the pitcher releases the ball later (i.e. more release_extension), both release_pos_x and release_pos_z will drop (closer to pivot point)—so the arm angle doesn't change much. 
 
 
-## Dataset Explanation
-
-### Raw_data
-- savant_data_YYYY: has all the pitch_by_pitch data
-- arm_angles_YYYY: has all the arm angle data (per year, per pitcher)
-- spin_directions_YYYY: has all the spin direction/efficiency data (per year, per pitch type, per pitcher) 
-    - (savant_data has direction data, but not efficiency)
-
-#### arm_angles_YYYY 
-Contains arm angle data
-- pitcher_name 
-- year 
-- pitch_hand: L/R
-- n_pitches 
-- team_id
-- ball_angle: average arm angle
-- relative_release_ball_x: average horizontal release position (relative to center of mass)
-- release_ball_z: average release height
-- relative_shoulder_x: average horizontal shoulder position (relative to center of mass) 
-- shoulder_z: average shoulder height
 
 
 ## How to Create Dataset 
@@ -76,3 +69,25 @@ Adds 3 columns to savant_data_2020-2024.csv:
 - year
 - estimated_arm_angle: pitch-by-pitch
 - precise_average_arm_angle
+
+
+## Dataset Explanation
+
+### Raw_data
+- savant_data_YYYY: has all the pitch_by_pitch data
+- arm_angles_YYYY: has all the arm angle data (per year, per pitcher)
+- spin_directions_YYYY: has all the spin direction/efficiency data (per year, per pitch type, per pitcher) 
+    - (savant_data has direction data, but not efficiency)
+
+#### arm_angles_YYYY 
+Contains arm angle data
+- pitcher_name 
+- year 
+- pitch_hand: L/R
+- n_pitches 
+- team_id
+- ball_angle: average arm angle
+- relative_release_ball_x: average horizontal release position (relative to center of mass)
+- release_ball_z: average release height
+- relative_shoulder_x: average horizontal shoulder position (relative to center of mass) 
+- shoulder_z: average shoulder height
