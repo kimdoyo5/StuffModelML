@@ -1,30 +1,27 @@
 # StuffModelML
 
+
+
 ## Checklist
 - Filter for pitch types for which pitchers have thrown 10+ of each year (due to arm_angles and spin_directions dataset restriction)
+- What to do about NA's?
 
 ## TO-DO
-- Pitch-by-Pitch Spin Profile Estimation
-- Trajectory Calculator
-- Late Movement Calculator
-- CleanSavantData.py
+- [X] Pitch-by-Pitch Arm Angle Estimation
+- [X] Pitch-by-Pitch Gyro Angle Estimation
+- [ ] Trajectory Calculator
+- [ ] Late Movement Calculator
+- [ ] CleanSavantData.py
+
+
+
 
 
 ## What Each Part Does
 
-### Pitch-by-Pitch Spin Profile Estimation
-Incomplete
-
-### Trajectory Calculator
-Incomplete
-
-### Late Movement Calculator
-Incomplete
-
-
 ### Pitch-by-Pitch Arm Angle Estimation
 Currently, BaseballSavant only offers average arm angle for a pitcher, for each year.  
-This estimates pitch-by-pitch arm angle based on release_pos_x and release_pos_z.
+'Pitch-by-Pitch Arm Angle Estimation' estimates pitch-by-pitch arm angle based on release_pos_x and release_pos_z.
 
 Because MLB pitchers are elite athletes, they efficiently rotate in a single plane; their arm swing is in the same plane as torso rotation; wrist and shoulder movement planes are in line with each other.  
 
@@ -39,6 +36,34 @@ When release_pos_z is higher, or release_pos_x is more gloveside, the estimated_
 
 When the pitcher releases the ball later (i.e. more release_extension), both release_pos_x and release_pos_z will drop (closer to pivot point)—so the arm angle doesn't change much. 
 
+### Pitch-by-Pitch Gyro Angle Estimation  
+Currently, BaseballSavant only offers average "active spin" for a given pitch type, pitcher, and year.  
+'Pitch-by-Pitch Gyro Angle Estimation' estimates pitch-by-pitch gyro angle based on:
+- pitch_type_gyro_deg: inferred from active_spin
+- release_speed_diff: release_speed change from average (for pitcher's pitch_type's year)
+- spin_direction_diff: spin_direction change from average (for pitcher's pitch_type's year)
+- spin_rate_diff: spin_rate change from average (for pitcher's pitch_type's year)
+- arm_angle_diff: arm_angle change from average (for pitcher's pitch_type's year)
+- ssw_tilt: inferred - observed spin axis
+
+The predictor variables were fit to a linear model, categorized by: Fastball, Breaking, Offspeed
+(Pitches that were 'none of the above' were noted NA.)
+- Fastball: Multiple R^2:  0.3801, Adjusted R^2:  0.3799, p-value: < 2.2e-16
+- Breaking: Multiple R^2:  0.6783, Adjusted R^2:  0.6782, p-value: < 2.2e-16
+- Offspeed: No correlations
+    - Unfortunately, offspeeds showed no relationships even when split into reverse/non-reverse categories
+- We found no other models to be superior; this model doesn't appear to overfit.
+
+*Screwballs are assumed to have reverse gyro; Sinkers if their SSW goes in opposite direction; Changeups if they have lower efficiency than the pitcher's highest-efficiency fastball.
+All other pitches are assumed to have non-reverse gyro.
+
+### Trajectory Calculator
+Incomplete
+
+### Late Movement Calculator
+Incomplete
+
+
 
 
 
@@ -49,8 +74,11 @@ When the pitcher releases the ball later (i.e. more release_extension), both rel
 2. Run UpdateArmAnglesCSV.py
 3. Delete arm_angles_2020-2024.csv (rm "dataset/arm_angles_2020-2024.csv")
 4. Run AddArmAnglesToSavant.py
-5. Delete savant_data_2020-2024.py (rm "dataset/savant_data_2020-2024.csv")
-6. Delete arm_angles_2020-2024_updated.csv (rm "dataset/arm_angles_2020-2024_updated.csv)
+5. (Optional) Run ArmAngleEstimationTest.R
+6. Delete savant_data_2020-2024.py (rm "dataset/savant_data_2020-2024.csv")
+7. Delete arm_angles_2020-2024_updated.csv (rm "dataset/arm_angles_2020-2024_updated.csv)
+8. Run GyroAngleEstimation.R (tests available inside)
+9. Delete spin_directions_2020-2024.csv
 
 ### Explanation
 #### CombineCSV.py 
@@ -69,6 +97,26 @@ Adds 3 columns to savant_data_2020-2024.csv:
 - year
 - estimated_arm_angle: pitch-by-pitch
 - precise_average_arm_angle
+
+#### ArmAngleEstimationTest.csv
+Adds 15 columns to savant_data_2020-2024.csv:
+- pitch_type_average_arm_angle: Average arm angle for given pitcher, pitch_type, year
+- reverse_gyro: boolean
+- pitch_group: Fasball/Breaking/Offspeed (or NA)
+- pitch_type_release_speed: Average release_speed for given pitcher, pitch_type, year
+- pitch_type_spin_rate: Average spin_rate for given pitcher, pitch_type, year
+- pitch_type_spin_axis: Average spin_axis for given pitcher, pitch_type, year
+- pitch_type_gyro_deg: Average gyro_deg for given pitcher, pitch_type, year
+- spin_axis_standardized: LHP's were converted to RHPs
+- inferred_spin_axis_standardized: LHP's were converted to RHPs
+- release_speed_diff: release_speed - pitch_type_release_speed
+- spin_direction_diff: spin_axis - pitch_type_spin_axis
+- spin_rate_diff: spin_rate - pitch_type_spin_rate
+- arm_angle_diff: estimated_arm_angle - pitch_type_average_arm_angle
+- ssw_tilt: inferred - observed spin axis
+- estimated_gyro_deg
+
+
 
 
 ## Dataset Explanation
