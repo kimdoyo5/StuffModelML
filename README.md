@@ -79,6 +79,7 @@ Incomplete
 7. Delete arm_angles_2020-2024_updated.csv (rm "dataset/arm_angles_2020-2024_updated.csv)
 8. Run GyroAngleEstimation.R (tests available inside)
 9. Delete spin_directions_2020-2024.csv
+10. Run CleanSavantData.py
 
 ### Explanation
 #### CombineCSV.py 
@@ -98,7 +99,7 @@ Adds 3 columns to savant_data_2020-2024.csv:
 - estimated_arm_angle: pitch-by-pitch
 - precise_average_arm_angle
 
-#### ArmAngleEstimationTest.csv
+#### GyroAngleEstimation.R
 Adds 15 columns to savant_data_2020-2024.csv:
 - pitch_type_average_arm_angle: Average arm angle for given pitcher, pitch_type, year
 - reverse_gyro: boolean
@@ -115,6 +116,9 @@ Adds 15 columns to savant_data_2020-2024.csv:
 - arm_angle_diff: estimated_arm_angle - pitch_type_average_arm_angle
 - ssw_tilt: inferred - observed spin axis
 - estimated_gyro_deg
+
+#### CleanSavantData.py
+Removes columns from savant_data_2020-2024.csv:
 
 
 
