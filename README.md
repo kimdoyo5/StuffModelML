@@ -9,9 +9,10 @@
 ## TO-DO
 - [X] Pitch-by-Pitch Arm Angle Estimation
 - [X] Pitch-by-Pitch Gyro Angle Estimation
-- [ ] Trajectory Calculator
-- [ ] Late Movement Calculator
-- [ ] CleanSavantData.py
+- [X] CleanSavantData.py
+- [ ] Trajectory Calculator & Late Movement Calculator (Optional)
+- [ ] Model Outline
+
 
 
 
