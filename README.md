@@ -12,6 +12,9 @@
 - [X] CleanSavantData.py
 - [ ] Trajectory Calculator & Late Movement Calculator (Optional)
 - [ ] Model Outline
+- [ ] Combine the data into one main dataset so, we need to combine the data that exists plus the data Tom created into one dataset
+- [ ] We also need to get the RA9 of all the pitchers and match it to the data
+- [ ] Attach the label, so for each data point there should be the last years RA9 and then the label should be this years RA9
 
 
 
