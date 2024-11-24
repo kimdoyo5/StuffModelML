@@ -66,21 +66,6 @@ def save_dataset(dataset, file_name):
     except Exception as e:
         print(f"An error occurred while saving the dataset: {e}")
 
-def validate_dataset(dataset, valid_years):
-    errors = []
-    valid_years_set = set(str(year) for year in valid_years)
-
-    for i, row in enumerate(dataset):
-        # Check if 'game_date' exists and if its year is valid
-        if 'game_date' not in row or row['game_date'][:4] not in valid_years_set:
-            errors.append(f"Row {i+1}: Invalid year in game_date '{row.get('game_date', 'NA')}'.")
-
-        # Check if 'RA9' exists and is not "NA"
-        if 'RA9' not in row or row['RA9'] == "NA":
-            errors.append(f"Row {i+1}: Missing RA9 value.")
-
-    return len(errors) == 0, errors
-
 
 if __name__ == '__main__':
     original_file_path = "savant_data_2020-2024_updated.csv"
@@ -111,6 +96,6 @@ if __name__ == '__main__':
     test_set = merge_datasets(test_set, ra9_2024_dataset)
 
     # Save datasets
-    save_dataset(train_set, "cleaned_data/train_set.csv")
-    save_dataset(val_set, "cleaned_data/val_set.csv")
-    save_dataset(test_set, "cleaned_data/test_set.csv")
+    save_dataset(train_set, "data/train_set.csv")
+    save_dataset(val_set, "data/val_set.csv")
+    save_dataset(test_set, "data/test_set.csv")
