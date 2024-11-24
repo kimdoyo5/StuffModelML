@@ -19,7 +19,7 @@ def process_dataset(file_path, skip_header=True, skip_first_column=False):
             if skip_first_column:
                 row = row[1:]
             processed_row = {
-                headers[i]: (str(value).strip() if str(value).strip() else "NA")
+                headers[i]: (str(value).strip() if str(value).strip() else None)
                 for i, value in enumerate(row)
             }
             dataset.append(processed_row)
@@ -30,8 +30,8 @@ def merge_datasets(dataset1, dataset2):
     ra9_mapping = {row['mlbid']: row['RA9'] for row in dataset2}
 
     for row in dataset1:
-        pitcher_id = row.get('pitcher', "NA")
-        row['RA9'] = ra9_mapping.get(pitcher_id, "NA")
+        pitcher_id = row.get('pitcher', None)
+        row['RA9'] = ra9_mapping.get(pitcher_id, None)
 
     return dataset1
 
@@ -39,7 +39,7 @@ def filter_by_year(dataset, years):
     year_set = set(str(year) for year in years)
     filtered_dataset = [
         row for row in dataset
-        if 'game_date' in row and row['game_date'][:4] in year_set
+        if 'game_date' in row and row['game_date'] and row['game_date'][:4] in year_set
     ]
     return filtered_dataset
 
