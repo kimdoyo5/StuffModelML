@@ -76,11 +76,11 @@ Incomplete
 
 1. Run CombineCSV.py
 2. Run UpdateArmAnglesCSV.py
-3. Delete arm_angles_2020-2024.csv (rm "dataset/arm_angles_2020-2024.csv")
+3. Delete arm_angles_2020-2024.csv (rm "Dataset/arm_angles_2020-2024.csv")
 4. Run AddArmAnglesToSavant.py
 5. (Optional) Run ArmAngleEstimationTest.R
-6. Delete savant_data_2020-2024.py (rm "dataset/savant_data_2020-2024.csv")
-7. Delete arm_angles_2020-2024_updated.csv (rm "dataset/arm_angles_2020-2024_updated.csv)
+6. Delete savant_data_2020-2024.py (rm "Dataset/savant_data_2020-2024.csv")
+7. Delete arm_angles_2020-2024_updated.csv (rm "Dataset/arm_angles_2020-2024_updated.csv)
 8. Run GyroAngleEstimation.R (tests available inside)
 9. Delete spin_directions_2020-2024.csv
 10. Run CleanSavantData.py

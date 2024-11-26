@@ -2,9 +2,9 @@ import pandas as pd
 from ArmAngleEstimator import pivot_point_absolute, individual_arm_angle
 
 # Load data
-arm_angles_updated = pd.read_csv("dataset/arm_angles_2020-2024_updated.csv")
+arm_angles_updated = pd.read_csv("Dataset/arm_angles_2020-2024_updated.csv")
 print("arm_angles_updated loaded")
-savant_data = pd.read_csv("dataset/savant_data_2020-2024.csv")
+savant_data = pd.read_csv("Dataset/savant_data_2020-2024.csv")
 print("savant_data loaded")
 
 
@@ -103,6 +103,6 @@ print("Saving...")
 savant_data = savant_data.drop(columns=['abs_pivot_x', 'abs_pivot_z'])
 
 # Save the updated savant data with arm angle estimates
-savant_data.to_csv("dataset/savant_data_2020-2024_updated.csv", index=False)
+savant_data.to_csv("Dataset/savant_data_2020-2024_updated.csv", index=False)
 
-print("Update completed. Saved to 'dataset/savant_data_2020-2024_updated.csv'")
+print("Update completed. Saved to 'Dataset/savant_data_2020-2024_updated.csv'")
