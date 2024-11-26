@@ -43,6 +43,19 @@ def filter_by_year(dataset, years):
     ]
     return filtered_dataset
 
+def add_ra9_previous_year(previous_year_dataset, current_year_dataset):
+    previous_ra9_mapping = {row['mlbid']: row['RA9'] for row in previous_year_dataset if row['RA9']}
+
+    for row in current_year_dataset:
+        pitcher_id = row.get('pitcher', None)
+        if pitcher_id and pitcher_id in previous_ra9_mapping:
+            row['RA9_previous_year'] = previous_ra9_mapping[pitcher_id]
+        else:
+            row['RA9_previous_year'] = None
+
+    return current_year_dataset
+
+
 def format_print(data, num_rows=1):
     pp = pprint.PrettyPrinter(indent=2, width=120, sort_dicts=False)
     for i, row in enumerate(data[:num_rows]):
@@ -69,6 +82,7 @@ def save_dataset(dataset, file_name):
 
 if __name__ == '__main__':
     original_file_path = "savant_data_2020-2024_updated.csv"
+    ra9_2019 = "RA9 data/RA9 2019.csv"
     ra9_2020 = "RA9 data/RA9 2020.csv"
     ra9_2021 = "RA9 data/RA9 2021.csv"
     ra9_2022 = "RA9 data/RA9 2022.csv"
@@ -77,6 +91,7 @@ if __name__ == '__main__':
 
     # Process all datasets
     original_dataset = process_dataset(original_file_path, True, True)
+    ra9_2019_dataset = process_dataset(ra9_2019, False, False)
     ra9_2020_dataset = process_dataset(ra9_2020, False, False)
     ra9_2021_dataset = process_dataset(ra9_2021, False, False)
     ra9_2022_dataset = process_dataset(ra9_2022, False, False)
@@ -84,9 +99,21 @@ if __name__ == '__main__':
     ra9_2024_dataset = process_dataset(ra9_2024, False, False)
     
     # Filter by year
-    train_set = filter_by_year(original_dataset, [2020, 2021, 2022])
+    train_2020 = filter_by_year(original_dataset, [2020])
+    train_2021 = filter_by_year(original_dataset, [2021])
+    train_2022 = filter_by_year(original_dataset, [2022])
     val_set = filter_by_year(original_dataset, [2023])
     test_set = filter_by_year(original_dataset, [2024])
+
+    # Add previous year RA9 to each subset
+    train_2020 = add_ra9_previous_year(ra9_2019_dataset, train_2020)
+    train_2021 = add_ra9_previous_year(ra9_2020_dataset, train_2021)
+    train_2022 = add_ra9_previous_year(ra9_2021_dataset, train_2022)
+
+    # Combine all subsets into one train_set
+    train_set = train_2020 + train_2021 + train_2022
+    val_set = add_ra9_previous_year(ra9_2022_dataset, val_set)
+    test_set = add_ra9_previous_year(ra9_2023_dataset, test_set)
 
     # Merge RA9 by year
     train_set = merge_datasets(train_set, ra9_2020_dataset)
