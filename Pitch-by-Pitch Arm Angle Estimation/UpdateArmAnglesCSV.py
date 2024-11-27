@@ -5,7 +5,7 @@ import pandas as pd
 from ArmAngleEstimator import precise_average_arm_angle, calc_lever_length, calc_pivot_point
 
 # Load the data
-df = pd.read_csv("raw_data/arm_angles_2020-2024.csv")
+df = pd.read_csv("Dataset/arm_angles_2020-2024.csv")
 
 # Calculate and append the new columns
 df['precise_average_arm_angle'] = df.apply(
