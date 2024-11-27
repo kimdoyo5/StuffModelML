@@ -2,8 +2,9 @@ import pandas as pd
 import numpy as np
 import xgboost as xgb
 from sklearn.preprocessing import OrdinalEncoder
+from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
-import optuna
+import optuna  # Import Optuna
 
 
 def preprocess_data(df, target_column, encoder=None, feature_list=None):
@@ -13,11 +14,11 @@ def preprocess_data(df, target_column, encoder=None, feature_list=None):
     df = df.replace([np.inf, -np.inf], np.nan)
     df = df.dropna(subset=[target_column])
 
-    if feature_list is not None:
-        df = df[feature_list + [target_column]]
-
     X = df.drop(columns=[target_column])
     y = df[target_column]
+
+    if feature_list is not None:
+        X = X[feature_list]
 
     cat_cols = X.select_dtypes(include=['object', 'category']).columns
 
@@ -111,7 +112,7 @@ def objective(trial, X_train, y_train, X_val, y_val, X_test, y_test):
     model = xgb.train(
         param,
         dtrain,
-        num_boost_round=2500,
+        num_boost_round=1000,
         evals=[(dtrain, 'train'), (dval, 'eval')],
         early_stopping_rounds=50,
         evals_result=evals_result,
@@ -122,6 +123,7 @@ def objective(trial, X_train, y_train, X_val, y_val, X_test, y_test):
 
     rmse = np.sqrt(np.mean((y_val - y_val_pred) ** 2))
 
+    # Collect per-epoch accuracies and losses
     num_epochs = len(evals_result['train']['rmse'])
     train_accuracies = []
     val_accuracies = []
@@ -131,9 +133,11 @@ def objective(trial, X_train, y_train, X_val, y_val, X_test, y_test):
     accuracy_threshold = 0.2
 
     for epoch in range(num_epochs):
+        # Get predictions up to the current epoch
         y_train_pred = model.predict(dtrain, iteration_range=(0, epoch + 1))
         y_val_pred_epoch = model.predict(dval, iteration_range=(0, epoch + 1))
 
+        # Calculate accuracy
         train_acc = calculate_accuracy(y_train, y_train_pred, threshold=accuracy_threshold)
         val_acc = calculate_accuracy(y_val, y_val_pred_epoch, threshold=accuracy_threshold)
 
@@ -149,6 +153,7 @@ def objective(trial, X_train, y_train, X_val, y_val, X_test, y_test):
     y_test_pred = model.predict(dtest, iteration_range=(0, model.best_iteration + 1))
     test_accuracy = calculate_accuracy(y_test, y_test_pred, threshold=accuracy_threshold)
 
+    # Store in trial user attributes
     trial.set_user_attr('train_accuracies', train_accuracies)
     trial.set_user_attr('val_accuracies', val_accuracies)
     trial.set_user_attr('train_rmses', train_rmses)
@@ -177,6 +182,7 @@ def trial_callback(study, trial):
 
         plot_performance(epoch_performance, accuracy_threshold, trial.number)
 
+        # Print test set accuracy
         if test_accuracy is not None:
             print(
                 f"Trial {trial.number}: Test Set Accuracy: {test_accuracy:.2f}% (within ±{int(accuracy_threshold * 100)}%)\n")
@@ -199,18 +205,6 @@ def main():
 
     target_column = 'RA9'
 
-    data['game_date'] = pd.to_datetime(data['game_date'])
-    data = data.sort_values('game_date').reset_index(drop=True)
-
-    total_len = len(data)
-    train_end = int(total_len * 0.8)
-    val_end = int(total_len * 0.9)
-
-    train_data = data.iloc[:train_end]
-    val_data = data.iloc[train_end:val_end]
-    test_data = data.iloc[val_end:]
-
-    # List of specified features to use
     feature_list = [
         'stand',            # if the batter is left/right handed (categorical)
         'strikes',          # how many strikes the hitter has (categorical)
@@ -225,9 +219,13 @@ def main():
     ]
 
     encoder = None
-    X_train, y_train, encoder = preprocess_data(train_data, target_column, encoder, feature_list)
-    X_val, y_val, _ = preprocess_data(val_data, target_column, encoder, feature_list)
-    X_test, y_test, _ = preprocess_data(test_data, target_column, encoder, feature_list)
+    X, y, encoder = preprocess_data(data, target_column, encoder, feature_list)
+
+    X_train_val, X_test, y_train_val, y_test = train_test_split(
+        X, y, test_size=0.10, random_state=42)
+
+    X_train, X_val, y_train, y_val = train_test_split(
+        X_train_val, y_train_val, test_size=0.1111, random_state=42)
 
     X_train, X_val, X_test = remove_highly_correlated_features(X_train, X_val, X_test, threshold=0.90)
 
@@ -263,7 +261,7 @@ def main():
     model = xgb.train(
         params,
         dtrain,
-        num_boost_round=2500,
+        num_boost_round=1000,
         evals=[(dtrain, 'train'), (dval, 'eval')],
         evals_result=evals_result,
         early_stopping_rounds=250,
