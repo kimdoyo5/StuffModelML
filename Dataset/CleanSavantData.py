@@ -17,6 +17,6 @@ savant_data = savant_data.drop(
              'bat_score','fld_score','post_bat_score','post_fld_score'])
 
 # Save the updated savant data
-savant_data.to_csv("dataset/savant_data_2020-2024_updated.csv", index=False)
+savant_data.to_csv("Dataset/savant_data_2020-2024_updated.csv", index=False)
 
 print("Update completed.")

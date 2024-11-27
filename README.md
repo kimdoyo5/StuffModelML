@@ -12,9 +12,9 @@
 - [X] CleanSavantData.py
 - [ ] Trajectory Calculator & Late Movement Calculator (Optional)
 - [ ] Model Outline
-- [ ] Combine the data into one main dataset so, we need to combine the data that exists plus the data Tom created into one dataset
-- [ ] We also need to get the RA9 of all the pitchers and match it to the data
-- [ ] Attach the label, so for each data point there should be the last years RA9 and then the label should be this years RA9
+- [x] Combine the data into one main dataset so, we need to combine the data that exists plus the data Tom created into one dataset
+- [x] We also need to get the RA9 of all the pitchers and match it to the data
+- [x] Attach the label, so for each data point there should be the last years RA9 and then the label should be this years RA9
 
 
 
@@ -76,11 +76,11 @@ Incomplete
 
 1. Run CombineCSV.py
 2. Run UpdateArmAnglesCSV.py
-3. Delete arm_angles_2020-2024.csv (rm "dataset/arm_angles_2020-2024.csv")
+3. Delete arm_angles_2020-2024.csv (rm "Dataset/arm_angles_2020-2024.csv")
 4. Run AddArmAnglesToSavant.py
 5. (Optional) Run ArmAngleEstimationTest.R
-6. Delete savant_data_2020-2024.py (rm "dataset/savant_data_2020-2024.csv")
-7. Delete arm_angles_2020-2024_updated.csv (rm "dataset/arm_angles_2020-2024_updated.csv)
+6. Delete savant_data_2020-2024.py (rm "Dataset/savant_data_2020-2024.csv")
+7. Delete arm_angles_2020-2024_updated.csv (rm "Dataset/arm_angles_2020-2024_updated.csv)
 8. Run GyroAngleEstimation.R (tests available inside)
 9. Delete spin_directions_2020-2024.csv
 10. Run CleanSavantData.py

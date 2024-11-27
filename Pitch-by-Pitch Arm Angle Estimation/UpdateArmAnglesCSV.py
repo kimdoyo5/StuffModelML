@@ -33,6 +33,6 @@ pivot_points_df = pd.DataFrame(pivot_points.tolist(), columns=['pivot_point_x', 
 df = pd.concat([df, pivot_points_df], axis=1)
 
 # Write the updated DataFrame to the new CSV file
-df.to_csv("dataset/arm_angles_2020-2024_updated.csv", index=False)
+df.to_csv("Dataset/arm_angles_2020-2024_updated.csv", index=False)
 
 print("Updated CSV files have been written with '_updated' suffix.")
