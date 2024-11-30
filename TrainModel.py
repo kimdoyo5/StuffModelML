@@ -124,7 +124,6 @@ def objective(trial, X_train, y_train, X_val, y_val, X_test, y_test):
 
     rmse = np.sqrt(np.mean((y_val - y_val_pred) ** 2))
 
-    # Collect per-epoch accuracies and losses
     num_epochs = len(evals_result['train']['rmse'])
     train_accuracies = []
     val_accuracies = []
@@ -134,11 +133,9 @@ def objective(trial, X_train, y_train, X_val, y_val, X_test, y_test):
     accuracy_threshold = 0.2
 
     for epoch in range(num_epochs):
-        # Get predictions up to the current epoch
         y_train_pred = model.predict(dtrain, iteration_range=(0, epoch + 1))
         y_val_pred_epoch = model.predict(dval, iteration_range=(0, epoch + 1))
 
-        # Calculate accuracy
         train_acc = calculate_accuracy(y_train, y_train_pred, threshold=accuracy_threshold)
         val_acc = calculate_accuracy(y_val, y_val_pred_epoch, threshold=accuracy_threshold)
 
@@ -154,7 +151,6 @@ def objective(trial, X_train, y_train, X_val, y_val, X_test, y_test):
     y_test_pred = model.predict(dtest, iteration_range=(0, model.best_iteration + 1))
     test_accuracy = calculate_accuracy(y_test, y_test_pred, threshold=accuracy_threshold)
 
-    # Store in trial user attributes
     trial.set_user_attr('train_accuracies', train_accuracies)
     trial.set_user_attr('val_accuracies', val_accuracies)
     trial.set_user_attr('train_rmses', train_rmses)
@@ -183,13 +179,11 @@ def trial_callback(study, trial):
 
         plot_performance(epoch_performance, accuracy_threshold, trial.number)
 
-        # Get final epoch metrics
         final_train_accuracy = train_accuracies[-1]
         final_val_accuracy = val_accuracies[-1]
         final_train_rmse = train_rmses[-1]
         final_val_rmse = val_rmses[-1]
 
-        # Print accuracies and losses
         print(f"Trial {trial.number}:")
         print(f"  Train Accuracy: {final_train_accuracy:.2f}% (within ±{int(accuracy_threshold * 100)}%)")
         print(f"  Validation Accuracy: {final_val_accuracy:.2f}% (within ±{int(accuracy_threshold * 100)}%)")
