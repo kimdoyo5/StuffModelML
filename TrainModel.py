@@ -45,7 +45,7 @@ def plot_performance(epoch_performance, threshold, trial_number):
     Plot training and validation accuracy and loss over epochs.
     """
     epochs = list(range(1, len(epoch_performance['train']['accuracy']) + 1))
-    plt.figure(figsize=(12, 5))
+    plt.figure(figsize=(16, 5))
 
     plt.subplot(1, 2, 1)
     plt.plot(epochs, epoch_performance['train']['accuracy'], label='Training Accuracy')
