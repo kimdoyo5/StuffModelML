@@ -93,7 +93,8 @@ def objective(trial, X_train, y_train, X_val, y_val, X_test, y_test):
         'eval_metric': 'rmse',
         'random_state': 42,
         'verbosity': 0,
-        'max_depth': trial.suggest_int('max_depth', 2, 6),
+        'tree_method': 'gpu_hist',
+        'max_depth': trial.suggest_int('max_depth', 2, 10),
         'learning_rate': trial.suggest_float('learning_rate', 1e-4, 0.1, log=True),
         'subsample': trial.suggest_float('subsample', 0.5, 1.0),
         'colsample_bytree': trial.suggest_float('colsample_bytree', 0.5, 1.0),
@@ -112,7 +113,7 @@ def objective(trial, X_train, y_train, X_val, y_val, X_test, y_test):
     model = xgb.train(
         param,
         dtrain,
-        num_boost_round=1000,
+        num_boost_round=10000,
         evals=[(dtrain, 'train'), (dval, 'eval')],
         early_stopping_rounds=50,
         evals_result=evals_result,
@@ -198,19 +199,21 @@ def trial_callback(study, trial):
 
 
 def main():
-    train_file = 'Dataset/data/train_set.csv'
-    val_file = 'Dataset/data/val_set.csv'
-    test_file = 'Dataset/data/test_set.csv'
+    # train_file = 'Dataset/data/train_set.csv'
+    # val_file = 'Dataset/data/val_set.csv'
+    # test_file = 'Dataset/data/test_set.csv'
+    #
+    # train_data = pd.read_csv(train_file)
+    # val_data = pd.read_csv(val_file)
+    # test_data = pd.read_csv(test_file)
+    #
+    # data = pd.concat([train_data, val_data, test_data], ignore_index=True)
+    #
+    # combined_data_file = 'Dataset/data/combined_data.csv'
+    # data.to_csv(combined_data_file, index=False)
+    # print(f"Combined data saved to {combined_data_file}")
 
-    train_data = pd.read_csv(train_file)
-    val_data = pd.read_csv(val_file)
-    test_data = pd.read_csv(test_file)
-
-    data = pd.concat([train_data, val_data, test_data], ignore_index=True)
-
-    combined_data_file = 'Dataset/data/combined_data.csv'
-    data.to_csv(combined_data_file, index=False)
-    print(f"Combined data saved to {combined_data_file}")
+    data = pd.read_csv('Dataset/data/combined_data.csv')
 
     target_column = 'RA9'
 
@@ -256,6 +259,7 @@ def main():
         'eval_metric': 'rmse',
         'random_state': 42,
         'verbosity': 0,
+        'tree_method': 'gpu_hist',
         **study.best_params
     }
 
@@ -274,10 +278,10 @@ def main():
     model = xgb.train(
         params,
         dtrain,
-        num_boost_round=1000,
+        num_boost_round=10000,
         evals=[(dtrain, 'train'), (dval, 'eval')],
         evals_result=evals_result,
-        early_stopping_rounds=250,
+        early_stopping_rounds=50,
         verbose_eval=False
     )
 
