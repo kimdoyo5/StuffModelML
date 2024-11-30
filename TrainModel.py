@@ -5,6 +5,7 @@ from sklearn.preprocessing import OrdinalEncoder
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import optuna
+import seaborn as sns
 
 
 def preprocess_data(df, target_column, encoder=None, feature_list=None):
@@ -42,26 +43,30 @@ def calculate_accuracy(y_true, y_pred, threshold=0.2):
 
 def plot_performance(epoch_performance, threshold, trial_number):
     """
-    Plot training and validation accuracy and loss over epochs.
+    Plot training and validation accuracy and loss over epochs using seaborn.
     """
-    epochs = list(range(1, len(epoch_performance['train']['accuracy']) + 1))
-    plt.figure(figsize=(16, 5))
 
-    plt.subplot(1, 2, 1)
-    plt.plot(epochs, epoch_performance['train']['accuracy'], label='Training Accuracy')
-    plt.plot(epochs, epoch_performance['val']['accuracy'], label='Validation Accuracy')
+    epochs = list(range(1, len(epoch_performance['train']['accuracy']) + 1))
+    fig = plt.figure(figsize=(16, 5))
+
+    ax1 = plt.subplot(1, 2, 1)
+    sns.lineplot(x=epochs, y=epoch_performance['train']['accuracy'], label='Training Accuracy')
+    sns.lineplot(x=epochs, y=epoch_performance['val']['accuracy'], label='Validation Accuracy')
     plt.xlabel('Epoch')
     plt.ylabel(f'Accuracy (%) (within ±{int(threshold * 100)}%)')
     plt.title(f'Trial {trial_number}: Training vs Validation Accuracy Over Epochs')
-    plt.legend()
 
-    plt.subplot(1, 2, 2)
-    plt.plot(epochs, epoch_performance['train']['rmse'], label='Training RMSE')
-    plt.plot(epochs, epoch_performance['val']['rmse'], label='Validation RMSE')
+    max_epoch = len(epochs)
+    tick_positions = [1, max_epoch // 4, max_epoch // 2, (3 * max_epoch) // 4, max_epoch]
+    plt.xticks(tick_positions)
+
+    ax2 = plt.subplot(1, 2, 2)
+    sns.lineplot(x=epochs, y=epoch_performance['train']['rmse'], label='Training RMSE')
+    sns.lineplot(x=epochs, y=epoch_performance['val']['rmse'], label='Validation RMSE')
     plt.xlabel('Epoch')
     plt.ylabel('RMSE')
     plt.title(f'Trial {trial_number}: Training vs Validation RMSE Over Epochs')
-    plt.legend()
+    plt.xticks(tick_positions)
 
     plt.tight_layout()
     plt.show()
