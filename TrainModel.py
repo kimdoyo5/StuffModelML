@@ -229,7 +229,6 @@ def main():
         'ax',  # horizontal acceleration of the pitch
         'estimated_arm_angle',
         'estimated_gyro_deg',
-        'release_extension',
         'p_throws'
     ]
 
