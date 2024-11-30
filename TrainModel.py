@@ -100,7 +100,7 @@ def objective(trial, X_train, y_train, X_val, y_val, X_test, y_test):
         'verbosity': 0,
         'tree_method': 'gpu_hist',
         'max_depth': trial.suggest_int('max_depth', 2, 10),
-        'learning_rate': trial.suggest_float('learning_rate', 1e-4, 0.1, log=True),
+        'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.1, log=True),
         'subsample': trial.suggest_float('subsample', 0.5, 1.0),
         'colsample_bytree': trial.suggest_float('colsample_bytree', 0.5, 1.0),
         'gamma': trial.suggest_float('gamma', 1e-8, 1.0, log=True),
