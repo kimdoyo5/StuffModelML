@@ -4,7 +4,7 @@ import xgboost as xgb
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
-import optuna  # Import Optuna
+import optuna
 
 
 def preprocess_data(df, target_column, encoder=None, feature_list=None):
@@ -93,7 +93,7 @@ def objective(trial, X_train, y_train, X_val, y_val, X_test, y_test):
         'eval_metric': 'rmse',
         'random_state': 42,
         'verbosity': 0,
-        'max_depth': trial.suggest_int('max_depth', 2, 10),
+        'max_depth': trial.suggest_int('max_depth', 2, 6),
         'learning_rate': trial.suggest_float('learning_rate', 1e-4, 0.1, log=True),
         'subsample': trial.suggest_float('subsample', 0.5, 1.0),
         'colsample_bytree': trial.suggest_float('colsample_bytree', 0.5, 1.0),
@@ -182,10 +182,19 @@ def trial_callback(study, trial):
 
         plot_performance(epoch_performance, accuracy_threshold, trial.number)
 
-        # Print test set accuracy
-        if test_accuracy is not None:
-            print(
-                f"Trial {trial.number}: Test Set Accuracy: {test_accuracy:.2f}% (within ±{int(accuracy_threshold * 100)}%)\n")
+        # Get final epoch metrics
+        final_train_accuracy = train_accuracies[-1]
+        final_val_accuracy = val_accuracies[-1]
+        final_train_rmse = train_rmses[-1]
+        final_val_rmse = val_rmses[-1]
+
+        # Print accuracies and losses
+        print(f"Trial {trial.number}:")
+        print(f"  Train Accuracy: {final_train_accuracy:.2f}% (within ±{int(accuracy_threshold * 100)}%)")
+        print(f"  Validation Accuracy: {final_val_accuracy:.2f}% (within ±{int(accuracy_threshold * 100)}%)")
+        print(f"  Test Set Accuracy: {test_accuracy:.2f}% (within ±{int(accuracy_threshold * 100)}%)")
+        print(f"  Train RMSE: {final_train_rmse:.4f}")
+        print(f"  Validation RMSE: {final_val_rmse:.4f}\n")
 
 
 def main():
@@ -206,16 +215,20 @@ def main():
     target_column = 'RA9'
 
     feature_list = [
-        'stand',            # if the batter is left/right handed (categorical)
-        'strikes',          # how many strikes the hitter has (categorical)
-        'release_speed',    # how fast the pitch is
-        'release_extension',# how far the release point is from the rubber
-        'release_pos_z',    # how high the release point is
-        'release_pos_x',    # how far horizontally the release point is from the center
-        'plate_z',          # vertical location of the pitch (where it ends)
-        'plate_x',          # horizontal location of the pitch (where it ends)
-        'az',               # vertical acceleration of the pitch
-        'ax'                # horizontal acceleration of the pitch
+        'stand',  # if the batter is left/right handed (categorical)
+        'strikes',  # how many strikes the hitter has (categorical)
+        'release_speed',  # how fast the pitch is
+        'release_extension',  # how far the release point is from the rubber
+        'release_pos_z',  # how high the release point is
+        'release_pos_x',  # how far horizontally the release point is from the center
+        'plate_z',  # vertical location of the pitch (where it ends)
+        'plate_x',  # horizontal location of the pitch (where it ends)
+        'az',  # vertical acceleration of the pitch
+        'ax',  # horizontal acceleration of the pitch
+        'estimated_arm_angle',
+        'estimated_gyro_deg',
+        'release_extension',
+        'p_throws'
     ]
 
     encoder = None
